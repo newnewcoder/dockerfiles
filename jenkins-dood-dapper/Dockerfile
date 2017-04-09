@@ -14,8 +14,5 @@ RUN curl -sL https://releases.rancher.com/dapper/latest/dapper-`uname -s`-`uname
 chmod +x /usr/local/bin/dapper && \
 usermod -aG staff jenkins
 
-# Jenkins user
-USER jenkins
-
 # Start supervisord when running the container
 CMD /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
