@@ -19,6 +19,10 @@ RUN apt-get update -y && \
 # Setting python3.6 default
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
 
+# Install pip
+RUN apt-get -y install curl
+RUN curl https://bootstrap.pypa.io/get-pip.py | python
+
 # Install ffmpeg.
 RUN apt-get update -y && \
     apt-get dist-upgrade -y && \

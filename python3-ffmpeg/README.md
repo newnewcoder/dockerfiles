@@ -4,6 +4,13 @@
 docker build -t newnewcoder/python36-ffmpeg:latest .
 ~~~
 
+## How to push
+
+~~~bash
+docker login
+docker push newnewcoder/python36-ffmpeg
+~~~
+
 ## How to run
 
 ~~~bash
