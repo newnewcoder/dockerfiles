@@ -29,4 +29,17 @@ RUN apt-get update -y && \
     apt-get dist-upgrade -y && \
     apt-get install ffmpeg -y
 
+# Setting Timezone
+ENV TZ 'Asia/Taipei'
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Setting locale
+RUN locale-gen zh_TW zh_TW.UTF-8 en_US.UTF-8
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
+ENV LC_ALL en_US.UTF-8 
+
+RUN apt-get autoremove
+RUN apt-get clean
+
 WORKDIR /work
