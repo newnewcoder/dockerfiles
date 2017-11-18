@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y software-properties-common && \
 
 # Install python3.6.
 RUN apt-get update -y && \
-    apt-get install python3.6 -y
+    apt-get install python3.6 -y && \
+    apt-get -y install python3.6-dev 
 
 # Setting python3.6 default
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
