@@ -1,0 +1,31 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}List MySql backup files{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Backup Files</h2>
+    <div class="text-right"><a href="{{ url_for('backup') }}" class="btn btn-primary">backup now</a></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>file name</th>
+                <th>size</th>
+                <th>delete</th>
+                <th>download</th>
+                <th>restore</th>
+            <tr>
+        </thead>
+        <tbody>
+            {% for f in backup_files|sort(attribute='create_time') %}
+                <tr>
+                    <td>{{ f.file_name }}</td>
+                    <td>{{ f.file_size }}</td>
+                    <td><a href="{{ url_for('delete', backup_file=f.file_name) }}">x</a></td>
+                    <td><a href="{{ url_for('download', backup_file=f.file_name) }}">v</a></td>
+                    <td><a href="{{ url_for('restore', backup_file=f.file_name) }}">r</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+{% endblock %}

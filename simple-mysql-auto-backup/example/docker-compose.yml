@@ -1,0 +1,49 @@
+version: '3'
+services:
+    mysql:
+        container_name: mysql
+        build: ./mysql
+        environment:
+          - "TZ=Asia/Taipei"
+          - "MYSQL_ROOT_PASSWORD=abc123"
+        command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        ports:
+          - 3306:3306
+        volumes:
+          - data:/var/lib/mysql
+    phpmyadmin:
+        container_name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        depends_on:
+        - mysql
+        links:
+        - mysql:db
+        ports:
+        - 7000:80
+        environment:
+        - MYSQL_USERNAME=root
+        - MYSQL_ROOT_PASSWORD=abc123
+    autobackup:
+        container_name: autobackup
+        image: newnewcoder/mysql-autobackup
+        environment:
+          - "TZ=Asia/Taipei"
+          - "HOUR=18"
+          - "MINUTE=09"
+          - "HOST=mysql"
+          - "USERNAME=root"
+          - "PASSWORD=abc123"
+          - "DATABASE=mydb"
+        volumes:
+          - mysqldump:/backup
+        depends_on:
+          - mysql
+        ports:
+          - 5000:5000
+        links:
+          - mysql:mysql
+volumes:
+  data:
+  upload:
+  mysqldump:
