@@ -119,6 +119,12 @@ if __name__ == '__main__':
         run_backup(app.config['HOSTNAME'], app.config['USERNAME'], app.config['PASSWORD'], app.config['DATABASE'], app.config['BACKUP_DIR'])
         return redirect(url_for('index'))
 
+    @app.route('/cleanup')
+    @login_required
+    def cleanup():
+        clean_old_dump(app.config['BACKUP_DIR'], "1")
+        return redirect(url_for('index'))
+
     @app.route('/restore/<backup_file>')
     @login_required
     def restore(backup_file):

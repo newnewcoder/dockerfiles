@@ -26,7 +26,7 @@ services:
         - MYSQL_ROOT_PASSWORD=abc123
     autobackup:
         container_name: autobackup
-        image: newnewcoder/mysql-autobackup
+        build: ..
         environment:
           - "TZ=Asia/Taipei"
           - "HOUR=18"
