@@ -4,7 +4,10 @@
 {% block content %}
 <div class="container">
     <h2>Backup Files</h2>
-    <div class="text-right"><a href="{{ url_for('backup') }}" class="btn btn-primary">backup now</a></div>
+    <div class="text-right">
+        <a href="{{ url_for('backup') }}" class="btn btn-primary">Backup now</a>
+        <a href="{{ url_for('simplelogin.logout') }}" class="btn btn-danger">Logout</a>
+    </div>
     <table class="table">
         <thead>
             <tr>

@@ -1,5 +1,7 @@
 
 from flask import Flask, render_template, redirect, url_for, current_app, send_file
+from flask_simplelogin import SimpleLogin
+from flask_simplelogin import login_required
 from werkzeug.urls import url_quote
 from flask_bootstrap import Bootstrap
 from flask_apscheduler import APScheduler
@@ -35,9 +37,12 @@ def delete_file(backup_root, backup_file):
         print("{} delete failed. exception:\r\n{}".format(backup_file, e))
 
 class Config(object):
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'something-secret'
     HOSTNAME = os.environ.get('HOST') or 'mysql'
     USERNAME = os.environ.get('USERNAME') or 'root'
     PASSWORD = os.environ.get('PASSWORD') or 'abc123'
+    SIMPLELOGIN_USERNAME = os.environ.get('USERNAME') or 'root'
+    SIMPLELOGIN_PASSWORD = os.environ.get('PASSWORD') or 'abc123'
     DATABASE = os.environ.get('DATABASE') or 'mydb'
     BACKUP_DIR = os.environ.get('BACKUP_DIR') or './backup'
     HOUR = os.environ.get('HOUR') or '00'
@@ -65,8 +70,11 @@ if __name__ == '__main__':
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
+    
+    SimpleLogin(app)
 
     @app.route('/')
+    @login_required
     def index():
         backup_files = []
         for f in os.listdir(backup_root): 
@@ -80,21 +88,25 @@ if __name__ == '__main__':
         return render_template('index.html', backup_files=backup_files)
 
     @app.route('/delete/<backup_file>')
+    @login_required
     def delete(backup_file):
         delete_file(app.config['BACKUP_DIR'], backup_file)
         return redirect(url_for('index'))
     
     @app.route('/backup')
+    @login_required
     def backup():
         run_backup(app.config['HOSTNAME'], app.config['USERNAME'], app.config['PASSWORD'], app.config['DATABASE'], app.config['BACKUP_DIR'])
         return redirect(url_for('index'))
 
     @app.route('/restore/<backup_file>')
+    @login_required
     def restore(backup_file):
         run_restore(app.config['HOSTNAME'], app.config['USERNAME'], app.config['PASSWORD'], app.config['DATABASE'], app.config['BACKUP_DIR'], backup_file)
         return redirect(url_for('index'))
 
     @app.route('/download/<backup_file>')
+    @login_required
     def download(backup_file):
         action = send_file(os.path.join(app.config['BACKUP_DIR'], backup_file), attachment_filename=backup_file, as_attachment=True)
         action = current_app.make_response(action)

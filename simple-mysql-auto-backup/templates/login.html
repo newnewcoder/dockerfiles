@@ -1,0 +1,35 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Login</h2>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-5">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flashes alert">
+                        {% for category, message in messages %}
+                        <li class="flashes alert alert-{{category}}">{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        {% if request.path == url_for('simplelogin.login') %}
+                        <ul class="flashes alert alert-info">
+                        <li>Please provide username and password to login</li>
+                        </ul>
+                        {% endif %}
+                    {% endif %}
+                {% endwith %}
+                <form action="{{ url_for('simplelogin.login') }}" method="post">
+                    <div class="form-group">
+                    {{ form.csrf_token }}
+                    <div>{{form.username.label}}: {{ form.username }}</div>
+                    <div>{{form.password.label}}: {{ form.password }}</div>
+                    {% if next %}<input type="hidden" name="next" value="{{next}}">{% endif %}
+                    <input class="btn-primary" type="submit" value="Login">
+                </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
