@@ -29,6 +29,17 @@ def run_restore(hostname, username, password, database, working_dir, backup_file
     except Exception as e:
         print("{} restore failed. exception:\r\n{}".format(database, e))
 
+def clean_old_dump(working_dir, keep_days):
+    try:
+        int(keep_days) # check if keep_days is number
+        p = subprocess.Popen('find $(pwd) -name "*.sql" -type f -mtime +' + keep_days.strip() + ' -exec rm -f {} \;', shell=True, cwd=working_dir)
+        output, err = p.communicate()
+        if(p.returncode != 0):
+            raise Exception("return code: {}, output: {}, error: {}".format(p.returncode, output if output else '', err if err else ''))
+        print("cleanup old data finish.")
+    except Exception as e:
+        print("cleanup failed. exception:\r\n{}".format(e))
+
 def delete_file(backup_root, backup_file):
     try:
         os.remove(os.path.join(backup_root, backup_file))
@@ -45,13 +56,22 @@ class Config(object):
     SIMPLELOGIN_PASSWORD = os.environ.get('PASSWORD') or 'abc123'
     DATABASE = os.environ.get('DATABASE') or 'mydb'
     BACKUP_DIR = os.environ.get('BACKUP_DIR') or './backup'
-    HOUR = os.environ.get('HOUR') or '00'
-    MINUTE = os.environ.get('MINUTE') or '00'
+    HOUR = os.environ.get('HOUR') or '00'          # backup job start time hour
+    MINUTE = os.environ.get('MINUTE') or '00'      # backup job start time minute
+    KEEP_DAYS = os.environ.get('KEEP_DAYS') or '7' # dumpfile keep days
     JOBS = [
         {
             'id': 'runbackup',
             'func': run_backup,
             'args': (HOSTNAME, USERNAME, PASSWORD, DATABASE, BACKUP_DIR),
+            'trigger': 'cron',
+            'hour': HOUR,
+            'minute': MINUTE
+        },
+        {
+            'id': 'cleanolddump',
+            'func': clean_old_dump,
+            'args': (BACKUP_DIR, KEEP_DAYS),
             'trigger': 'cron',
             'hour': HOUR,
             'minute': MINUTE
