@@ -12,7 +12,7 @@ flask-simplelogin==0.0.7
 Flask-WTF==0.14.2
 idna==2.7
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 MarkupSafe==1.1.0
 python-dateutil==2.7.5
 pytz==2018.7
